@@ -1,5 +1,5 @@
 {
-  "name": "astro-primitives",
+  "name": "@vladsivolobov/astro-primitives",
   "version": "1.0.0",
   "description": "Composable Astro UI primitives you can add and customize in your project",
   "files": [
@@ -17,7 +17,7 @@
   },
   "keywords": [],
   "author": "Vladislav Sivolobov",
-  "repository"
+  "repository": "https://github.com/VladSivoloobov/astro-primitives",
   "license": "ISC",
   "type": "module",
   "devDependencies": {

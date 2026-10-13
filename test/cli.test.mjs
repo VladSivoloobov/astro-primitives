@@ -1,6 +1,13 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -31,8 +38,8 @@ test('lists available components and utilities', () => {
   assert.equal(result.status, 0, result.stderr);
   assert.deepEqual(result.stdout.trim().split(/\r?\n/), [
     'badge',
+    'box',
     'button',
-    'card',
     'container',
     'footer',
     'gridlayout',
@@ -45,6 +52,7 @@ test('lists available components and utilities', () => {
     'stack',
     'textarea',
     'theme',
+    'title',
     'tv',
   ]);
 });
@@ -53,10 +61,22 @@ test('adds components and preserves local edits unless overwrite is requested', 
   withTemporaryProject((project) => {
     let result = runCli(['add', 'button', 'badge'], project);
     assert.equal(result.status, 0, result.stderr);
-    assert.match(readFileSync(join(project, 'src', 'utils', 'tv.ts'), 'utf8'), /tailwind-variants/);
-    assert.match(readFileSync(join(project, 'src', 'global.css'), 'utf8'), /@import 'tailwindcss';/);
-    assert.match(readFileSync(join(project, 'src', 'global.css'), 'utf8'), /@custom-variant xl/);
-    assert.match(readFileSync(join(project, 'src', 'global.css'), 'utf8'), /@import '\.\/theme\.css';/);
+    assert.match(
+      readFileSync(join(project, 'src', 'utils', 'tv.ts'), 'utf8'),
+      /tailwind-variants/,
+    );
+    assert.match(
+      readFileSync(join(project, 'src', 'global.css'), 'utf8'),
+      /@import 'tailwindcss';/,
+    );
+    assert.match(
+      readFileSync(join(project, 'src', 'global.css'), 'utf8'),
+      /@custom-variant xl/,
+    );
+    assert.match(
+      readFileSync(join(project, 'src', 'global.css'), 'utf8'),
+      /@import '\.\/theme\.css';/,
+    );
 
     const button = join(project, componentDirectory, 'Button.astro');
     writeFileSync(button, 'local edit');
@@ -71,9 +91,14 @@ test('adds components and preserves local edits unless overwrite is requested', 
 
     result = runCli(['add', '--all'], project);
     assert.equal(result.status, 0, result.stderr);
-    assert.equal(readdirSync(join(project, componentDirectory)).length, 14);
+    assert.equal(readdirSync(join(project, componentDirectory)).length, 15);
     assert.equal(readdirSync(join(project, 'src', 'utils')).length, 1);
-    assert.equal(readFileSync(join(project, 'src', 'theme.css'), 'utf8').includes('--primary:'), true);
+    assert.equal(
+      readFileSync(join(project, 'src', 'theme.css'), 'utf8').includes(
+        '--primary:',
+      ),
+      true,
+    );
   });
 });
 
@@ -82,7 +107,10 @@ test('adds the tv utility directly', () => {
     const result = runCli(['add', 'tv'], project);
 
     assert.equal(result.status, 0, result.stderr);
-    assert.match(readFileSync(join(project, 'src', 'utils', 'tv.ts'), 'utf8'), /export const tv = createTv/);
+    assert.match(
+      readFileSync(join(project, 'src', 'utils', 'tv.ts'), 'utf8'),
+      /export const tv = createTv/,
+    );
   });
 });
 
@@ -137,8 +165,12 @@ test('adds the theme when installing layout components', () => {
 
     assert.equal(result.status, 0, result.stderr);
     assert.equal(
-      readFileSync(join(project, 'src', 'components', 'ui', 'Container.astro'), 'utf8')
-        .includes('max-w-(--container-max-width) px-(--container-padding) sm:px-(--container-padding-sm) lg:px-(--container-padding-lg)'),
+      readFileSync(
+        join(project, 'src', 'components', 'ui', 'Container.astro'),
+        'utf8',
+      ).includes(
+        'max-w-(--container-max-width) px-(--container-padding) sm:px-(--container-padding-sm) lg:px-(--container-padding-lg)',
+      ),
       true,
     );
     assert.match(
@@ -149,8 +181,14 @@ test('adds the theme when installing layout components', () => {
       readFileSync(join(project, 'src', 'theme.css'), 'utf8'),
       /--container-padding-lg:/,
     );
-    assert.match(readFileSync(join(project, 'src', 'global.css'), 'utf8'), /@import 'tailwindcss';/);
-    assert.match(readFileSync(join(project, 'src', 'global.css'), 'utf8'), /@custom-variant xl/);
+    assert.match(
+      readFileSync(join(project, 'src', 'global.css'), 'utf8'),
+      /@import 'tailwindcss';/,
+    );
+    assert.match(
+      readFileSync(join(project, 'src', 'global.css'), 'utf8'),
+      /@custom-variant xl/,
+    );
     assert.equal(readdirSync(join(project, 'src')).includes('utils'), false);
   });
 });
@@ -165,7 +203,10 @@ test('adds theme tokens without overwriting global CSS', () => {
     const result = runCli(['add', 'theme'], project);
 
     assert.equal(result.status, 0, result.stderr);
-    assert.match(readFileSync(globalStylesheet, 'utf8'), /^\/\* app styles \*\/\r?\n@import '\.\/theme\.css';/);
+    assert.match(
+      readFileSync(globalStylesheet, 'utf8'),
+      /^\/\* app styles \*\/\r?\n@import '\.\/theme\.css';/,
+    );
     assert.match(readFileSync(themeStylesheet, 'utf8'), /--primary:/);
   });
 });

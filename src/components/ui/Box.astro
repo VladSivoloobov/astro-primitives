@@ -2,7 +2,7 @@
 import type { HTMLAttributes } from 'astro/types';
 import tv, { type VariantProps } from '../../utils/tv';
 
-const card = tv({
+const box = tv({
   base: 'rounded-xl border border-border bg-background text-foreground shadow-sm',
   variants: {
     padding: {
@@ -17,11 +17,11 @@ const card = tv({
   },
 });
 
-type Props = HTMLAttributes<'div'> & VariantProps<typeof card>;
+type Props = HTMLAttributes<'div'> & VariantProps<typeof box>;
 
 const { padding, class: className, ...attributes }: Props = Astro.props;
 ---
 
-<div class={card({ padding, class: className })} {...attributes}>
+<div class={box({ padding, class: className })} {...attributes}>
   <slot />
 </div>

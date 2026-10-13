@@ -1,13 +1,19 @@
 #!/usr/bin/env node
 
-import { appendFile, copyFile, mkdir, access, readFile } from 'node:fs/promises';
+import {
+  appendFile,
+  copyFile,
+  mkdir,
+  access,
+  readFile,
+} from 'node:fs/promises';
 import { constants } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 
 const componentFiles = {
   badge: 'Badge.astro',
+  box: 'Box.astro',
   button: 'Button.astro',
-  card: 'Card.astro',
   container: 'Container.astro',
   footer: 'Footer.astro',
   gridlayout: 'GridLayout.astro',
@@ -19,6 +25,7 @@ const componentFiles = {
   skeleton: 'Skeleton.astro',
   stack: 'Stack.astro',
   textarea: 'Textarea.astro',
+  title: 'Title.astro',
 } as const;
 
 const utilityFiles = {
@@ -36,8 +43,8 @@ type AddableName = ComponentName | UtilityName | ThemeName;
 
 const componentDependencies: Partial<Record<ComponentName, UtilityName[]>> = {
   badge: ['tv'],
+  box: ['tv'],
   button: ['tv'],
-  card: ['tv'],
   gridlayout: ['tv'],
   header: ['tv'],
   input: ['tv'],
@@ -45,12 +52,13 @@ const componentDependencies: Partial<Record<ComponentName, UtilityName[]>> = {
   skeleton: ['tv'],
   stack: ['tv'],
   textarea: ['tv'],
+  title: ['tv'],
 };
 
 const componentsWithTheme: ComponentName[] = [
   'badge',
+  'box',
   'button',
-  'card',
   'container',
   'input',
   'logo',
@@ -58,6 +66,7 @@ const componentsWithTheme: ComponentName[] = [
   'separator',
   'skeleton',
   'textarea',
+  'title',
 ];
 
 function printHelp() {
@@ -100,7 +109,11 @@ async function findTemplateDirectory(sourcePath: string) {
       await access(directory, constants.R_OK);
       return directory;
     } catch (error) {
-      if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
+      if (
+        error instanceof Error &&
+        'code' in error &&
+        error.code === 'ENOENT'
+      ) {
         continue;
       }
       throw error;
@@ -166,12 +179,12 @@ async function addComponents(args: string[]) {
   }
 
   const utilityNames = new Set<UtilityName>(
-    validNames.filter(
-      (name): name is UtilityName => Object.hasOwn(utilityFiles, name),
+    validNames.filter((name): name is UtilityName =>
+      Object.hasOwn(utilityFiles, name),
     ),
   );
-  const requestedComponents = validNames.filter(
-    (name): name is ComponentName => Object.hasOwn(componentFiles, name),
+  const requestedComponents = validNames.filter((name): name is ComponentName =>
+    Object.hasOwn(componentFiles, name),
   );
   for (const name of requestedComponents) {
     for (const dependency of componentDependencies[name] ?? []) {
@@ -179,12 +192,15 @@ async function addComponents(args: string[]) {
     }
   }
   const addTheme =
-    validNames.some((name): name is ThemeName => Object.hasOwn(themeFiles, name)) ||
-    requestedComponents.some((name) => componentsWithTheme.includes(name));
+    validNames.some((name): name is ThemeName =>
+      Object.hasOwn(themeFiles, name),
+    ) || requestedComponents.some((name) => componentsWithTheme.includes(name));
 
   const filesToAdd = [
     ...validNames
-      .filter((name): name is ComponentName => Object.hasOwn(componentFiles, name))
+      .filter((name): name is ComponentName =>
+        Object.hasOwn(componentFiles, name),
+      )
       .map((name) => ({
         filename: componentFiles[name],
         sourcePath: join('components', 'ui'),
@@ -196,11 +212,13 @@ async function addComponents(args: string[]) {
       targetPath: 'utils',
     })),
     ...(addTheme
-      ? [{
-        filename: themeFiles.theme,
-        sourcePath: '',
-        targetPath: '',
-      }]
+      ? [
+          {
+            filename: themeFiles.theme,
+            sourcePath: '',
+            targetPath: '',
+          },
+        ]
       : []),
   ];
 
@@ -209,19 +227,23 @@ async function addComponents(args: string[]) {
     const targetDirectory = resolve(process.cwd(), 'src', file.targetPath);
     await mkdir(targetDirectory, { recursive: true });
     const source = join(templateDirectory, file.filename);
-    const filename = 'outputFilename' in file ? file.outputFilename : file.filename;
+    const filename =
+      'outputFilename' in file ? file.outputFilename : file.filename;
     const target = join(targetDirectory, filename);
 
     try {
-      await copyFile(
-        source,
-        target,
-        overwrite ? 0 : constants.COPYFILE_EXCL,
-      );
+      await copyFile(source, target, overwrite ? 0 : constants.COPYFILE_EXCL);
       console.log(`Added ${join('src', file.targetPath, filename)}`);
     } catch (error) {
-      if (!overwrite && error instanceof Error && 'code' in error && error.code === 'EEXIST') {
-        console.log(`Skipped ${join('src', file.targetPath, filename)} (already exists)`);
+      if (
+        !overwrite &&
+        error instanceof Error &&
+        'code' in error &&
+        error.code === 'EEXIST'
+      ) {
+        console.log(
+          `Skipped ${join('src', file.targetPath, filename)} (already exists)`,
+        );
         continue;
       }
       throw error;
@@ -235,7 +257,9 @@ async function addComponents(args: string[]) {
     try {
       contents = await readFile(globalStylesheet, 'utf8');
     } catch (error) {
-      if (!(error instanceof Error && 'code' in error && error.code === 'ENOENT')) {
+      if (
+        !(error instanceof Error && 'code' in error && error.code === 'ENOENT')
+      ) {
         throw error;
       }
     }
@@ -268,7 +292,12 @@ async function main() {
     return;
   }
 
-  if (command === 'help' || command === '--help' || command === '-h' || !command) {
+  if (
+    command === 'help' ||
+    command === '--help' ||
+    command === '-h' ||
+    !command
+  ) {
     printHelp();
     return;
   }

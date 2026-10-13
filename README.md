@@ -15,12 +15,11 @@ npm install -D astro-primitives
 Then add only the components you need:
 
 ```sh
-npx astro-primitives add button badge
-npx astro-primitives add container section
-npx astro-primitives add gridlayout stack card
+npx astro-primitives add button badge title box
+npx astro-primitives add container section header footer
+npx astro-primitives add gridlayout stack
 npx astro-primitives add input textarea separator skeleton
-npx astro-primitives add tv
-npx astro-primitives add theme
+npx astro-primitives add logo tv theme
 ```
 
 Components are added to `src/components/ui`, and `tv` is added to `src/utils/tv.ts`. Components that use variants automatically add `tv` as a dependency. Components with theme styles also add `src/theme.css`. If `src/global.css` does not exist, the CLI copies the complete stylesheet template from the package. If it already exists, the CLI preserves it and adds the theme import only when missing. You can also add just the theme with `npx astro-primitives add theme`. Existing files are preserved by default. Pass `--overwrite` only when you want to replace component or theme files, or use `--all` to add every available component and utility.
@@ -38,46 +37,117 @@ npm install tailwind-variants
 
 ## Use a component
 
+### Basic example: page header and CTA
+
 ```astro
 ---
+import Container from '../components/ui/Container.astro';
+import Section from '../components/ui/Section.astro';
+import Title from '../components/ui/Title.astro';
 import Button from '../components/ui/Button.astro';
 import Badge from '../components/ui/Badge.astro';
 ---
 
-<Button href="/get-started" variant="outline" size="lg">
-  Get started
-</Button>
+<Container>
+  <Section spacing="lg">
+    <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+      <div>
+        <Badge variant="secondary">New</Badge>
+        <Title as="h1" level="h1" class="mt-4">
+          Build faster with Astro primitives
+        </Title>
+        <p class="mt-3 max-w-xl text-sm text-muted-foreground">
+          Copy the components you need, style them once, and keep the rest of the app untouched.
+        </p>
+      </div>
 
-<Badge variant="secondary">New</Badge>
+      <Button href="/docs" variant="default" size="lg">
+        Read docs
+      </Button>
+    </div>
+  </Section>
+</Container>
 ```
 
-`GridLayout` provides configurable columns and gaps. `Stack` lays out children vertically by default and supports `orientation="horizontal"` or `orientation="vertical"`, along with gap and alignment props. Both `Stack` and `GridLayout` accept `as="div"`, `as="ul"`, or `as="ol"` (default: `div`) to choose their root element. Use `<li>` children when rendering a list. `Card` supports adjustable padding. `Input` and `Textarea` expose size, invalid, and resize styling options. `Separator` supports horizontal and vertical orientations, and `Skeleton` provides an accessible loading placeholder.
+### Title variants
+
+`Title` is a semantic heading helper. You can choose the heading level, alignment, weight, and custom class names:
+
+```astro
+---
+import Title from '../components/ui/Title.astro';
+---
+
+<Title as="h2" level="h2" align="left" weight="bold">
+  Product overview
+</Title>
+
+<Title as="h3" level="h3" align="center" weight="medium">
+  Simple and flexible
+</Title>
+```
+
+### Box grid and layout composition
 
 ```astro
 ---
 import GridLayout from '../components/ui/GridLayout.astro';
 import Stack from '../components/ui/Stack.astro';
-import Card from '../components/ui/Card.astro';
+import Box from '../components/ui/Box.astro';
 import Button from '../components/ui/Button.astro';
+import Title from '../components/ui/Title.astro';
 ---
 
-<Stack as="ul" orientation="horizontal" align="center" gap="lg">
-  <li>
-  <h2>Dashboard</h2>
-  </li>
-  <li>
+<Stack as="header" orientation="horizontal" align="center" justify="between" gap="lg" class="mb-8">
+  <Title as="h2" level="h3">Dashboard</Title>
   <Button size="sm">Add item</Button>
-  </li>
 </Stack>
 
-<GridLayout as="ol" columns={3} gap="lg">
-  <li><Card>First card</Card></li>
-  <li><Card>Second card</Card></li>
-  <li><Card>Third card</Card></li>
+<GridLayout columns={3} gap="lg">
+  <Box>
+    <Title as="h3" level="h4">Analytics</Title>
+    <p>Track engagement and conversion.</p>
+  </Box>
+
+  <Box>
+    <Title as="h3" level="h4">Projects</Title>
+    <p>Keep all workstreams organized.</p>
+  </Box>
+
+  <Box>
+    <Title as="h3" level="h4">Billing</Title>
+    <p>Monitor current usage and renewals.</p>
+  </Box>
 </GridLayout>
 ```
 
-`Button` also renders a native button when `href` is omitted, and forwards native button attributes such as `type` and `disabled`. `Badge` accepts either slot content or a `text` prop. `Container` uses `--container-max-width` for its maximum width. `Section` supports `none`, `sm`, `default`, and `lg` spacing with adjustable `--section-padding-*` variables. `Logo` accepts `label` and `href`, and `Header`/`Footer` provide semantic wrappers for project-specific content.
+### Form controls and section spacing
+
+```astro
+---
+import Section from '../components/ui/Section.astro';
+import Container from '../components/ui/Container.astro';
+import Input from '../components/ui/Input.astro';
+import Textarea from '../components/ui/Textarea.astro';
+import Button from '../components/ui/Button.astro';
+import Separator from '../components/ui/Separator.astro';
+---
+
+<Container>
+  <Section spacing="default">
+    <form class="space-y-4">
+      <Input type="email" placeholder="Email address" />
+      <Textarea placeholder="Project details" rows={5} />
+
+      <Separator />
+
+      <Button type="submit" variant="default">Send inquiry</Button>
+    </form>
+  </Section>
+</Container>
+```
+
+`Button` also renders a native button when `href` is omitted, and forwards native button attributes such as `type` and `disabled`. `Badge` accepts either slot content or a `text` prop. `Container` uses `--container-max-width` for its maximum width. `Section` supports `none`, `sm`, `default`, and `lg` spacing with adjustable `--section-padding-*` variables. `Logo` accepts `label` and `href`, and `Header`/`Footer` provide semantic wrappers for project-specific content. `Title` gives you semantic heading styles with `level`, `align`, and `weight` variants.
 
 ## Theme and Tailwind CSS
 
