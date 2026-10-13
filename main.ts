@@ -196,7 +196,12 @@ async function addComponents(args: string[]) {
       Object.hasOwn(themeFiles, name),
     ) || requestedComponents.some((name) => componentsWithTheme.includes(name));
 
-  const filesToAdd = [
+  const filesToAdd: Array<{
+    filename: string;
+    sourcePath: string;
+    targetPath: string;
+    outputFilename?: string;
+  }> = [
     ...validNames
       .filter((name): name is ComponentName =>
         Object.hasOwn(componentFiles, name),
@@ -227,8 +232,10 @@ async function addComponents(args: string[]) {
     const targetDirectory = resolve(process.cwd(), 'src', file.targetPath);
     await mkdir(targetDirectory, { recursive: true });
     const source = join(templateDirectory, file.filename);
-    const filename =
-      'outputFilename' in file ? file.outputFilename : file.filename;
+    const filename: string =
+      'outputFilename' in file && typeof file.outputFilename === 'string'
+        ? file.outputFilename
+        : file.filename;
     const target = join(targetDirectory, filename);
 
     try {
@@ -239,6 +246,7 @@ async function addComponents(args: string[]) {
         !overwrite &&
         error instanceof Error &&
         'code' in error &&
+        typeof error.code === 'string' &&
         error.code === 'EEXIST'
       ) {
         console.log(
