@@ -13,7 +13,9 @@
   "scripts": {
     "test": "npm run build && node --test test/cli.test.mjs",
     "dev": "tsx main.ts",
-    "build": "tsup main.ts --format esm --clean --minify"
+    "build": "tsup main.ts --format esm --clean --minify",
+
+    "prepublishOnly": "npm run test && npm run build"
   },
   "keywords": [],
   "author": "Vladislav Sivolobov",
