@@ -1,5 +1,7 @@
 # Astro Primitives
 
+[![License: ISC](https://img.shields.io/badge/license-ISC-007EC6?style=for-the-badge)](./package.json) [![Astro](https://img.shields.io/badge/Astro-0C1222?style=for-the-badge&logo=astro&logoColor=FDFDFE)](https://astro.build/) [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/) [![tailwind-variants](https://img.shields.io/badge/tailwind--variants-3.x-38BDF8?style=for-the-badge)](https://www.tailwind-variants.org/)
+
 Composable Astro UI components that you add to your project and own. The CLI copies the selected `.astro` files into your source tree; after that, edit their markup, props, and Tailwind classes directly.
 
 ## Install components
@@ -21,7 +23,7 @@ npx astro-primitives add tv
 npx astro-primitives add theme
 ```
 
-Components are added to `src/components/ui`, and `tv` is added to `src/utils/tv.ts`. Components that use variants automatically add `tv` as a dependency. Components with color styles also add the theme tokens to `src/styles/astro-primitives.css` and add an import for them to `src/global.css`, preserving existing CSS. You can also add just the tokens with `npx astro-primitives add theme`. Existing files are preserved by default. Pass `--overwrite` only when you want to replace local files, or use `--all` to add every available component and utility.
+Components are added to `src/components/ui`, and `tv` is added to `src/utils/tv.ts`. Components that use variants automatically add `tv` as a dependency. Components with theme styles also add `src/theme.css`. If `src/global.css` does not exist, the CLI copies the complete stylesheet template from the package. If it already exists, the CLI preserves it and adds the theme import only when missing. You can also add just the theme with `npx astro-primitives add theme`. Existing files are preserved by default. Pass `--overwrite` only when you want to replace component or theme files, or use `--all` to add every available component and utility.
 
 ```sh
 npx astro-primitives list

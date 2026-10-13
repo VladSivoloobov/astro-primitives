@@ -54,7 +54,9 @@ test('adds components and preserves local edits unless overwrite is requested', 
     let result = runCli(['add', 'button', 'badge'], project);
     assert.equal(result.status, 0, result.stderr);
     assert.match(readFileSync(join(project, 'src', 'utils', 'tv.ts'), 'utf8'), /tailwind-variants/);
-    assert.match(readFileSync(join(project, 'src', 'global.css'), 'utf8'), /styles\/astro-primitives\.css/);
+    assert.match(readFileSync(join(project, 'src', 'global.css'), 'utf8'), /@import 'tailwindcss';/);
+    assert.match(readFileSync(join(project, 'src', 'global.css'), 'utf8'), /@custom-variant xl/);
+    assert.match(readFileSync(join(project, 'src', 'global.css'), 'utf8'), /@import '\.\/theme\.css';/);
 
     const button = join(project, componentDirectory, 'Button.astro');
     writeFileSync(button, 'local edit');
@@ -71,7 +73,7 @@ test('adds components and preserves local edits unless overwrite is requested', 
     assert.equal(result.status, 0, result.stderr);
     assert.equal(readdirSync(join(project, componentDirectory)).length, 14);
     assert.equal(readdirSync(join(project, 'src', 'utils')).length, 1);
-    assert.equal(readdirSync(join(project, 'src', 'styles')).length, 1);
+    assert.equal(readFileSync(join(project, 'src', 'theme.css'), 'utf8').includes('--primary:'), true);
   });
 });
 
@@ -140,14 +142,15 @@ test('adds the theme when installing layout components', () => {
       true,
     );
     assert.match(
-      readFileSync(join(project, 'src', 'styles', 'astro-primitives.css'), 'utf8'),
+      readFileSync(join(project, 'src', 'theme.css'), 'utf8'),
       /--container-max-width:/,
     );
     assert.match(
-      readFileSync(join(project, 'src', 'styles', 'astro-primitives.css'), 'utf8'),
+      readFileSync(join(project, 'src', 'theme.css'), 'utf8'),
       /--container-padding-lg:/,
     );
-    assert.equal(readdirSync(join(project, 'src')).includes('global.css'), true);
+    assert.match(readFileSync(join(project, 'src', 'global.css'), 'utf8'), /@import 'tailwindcss';/);
+    assert.match(readFileSync(join(project, 'src', 'global.css'), 'utf8'), /@custom-variant xl/);
     assert.equal(readdirSync(join(project, 'src')).includes('utils'), false);
   });
 });
@@ -155,15 +158,14 @@ test('adds the theme when installing layout components', () => {
 test('adds theme tokens without overwriting global CSS', () => {
   withTemporaryProject((project) => {
     const globalStylesheet = join(project, 'src', 'global.css');
-    const stylesDirectory = join(project, 'src', 'styles');
-    const themeStylesheet = join(stylesDirectory, 'astro-primitives.css');
+    const themeStylesheet = join(project, 'src', 'theme.css');
     mkdirSync(join(project, 'src'), { recursive: true });
     writeFileSync(globalStylesheet, '/* app styles */');
 
     const result = runCli(['add', 'theme'], project);
 
     assert.equal(result.status, 0, result.stderr);
-    assert.match(readFileSync(globalStylesheet, 'utf8'), /^\/\* app styles \*\/\r?\n@import/);
+    assert.match(readFileSync(globalStylesheet, 'utf8'), /^\/\* app styles \*\/\r?\n@import '\.\/theme\.css';/);
     assert.match(readFileSync(themeStylesheet, 'utf8'), /--primary:/);
   });
 });

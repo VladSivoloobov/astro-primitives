@@ -5,6 +5,7 @@
   "files": [
     "dist/main.js",
     "src/components/ui",
+    "src/global.css",
     "src/theme.css",
     "src/utils",
     "README.md"

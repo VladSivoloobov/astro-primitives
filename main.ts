@@ -199,8 +199,7 @@ async function addComponents(args: string[]) {
       ? [{
         filename: themeFiles.theme,
         sourcePath: '',
-        targetPath: 'styles',
-        outputFilename: 'astro-primitives.css',
+        targetPath: '',
       }]
       : []),
   ];
@@ -231,8 +230,8 @@ async function addComponents(args: string[]) {
 
   if (addTheme) {
     const globalStylesheet = resolve(process.cwd(), 'src', 'global.css');
-    const themeImport = "@import './styles/astro-primitives.css';";
-    let contents = '';
+    const themeImport = "@import './theme.css';";
+    let contents: string | undefined;
     try {
       contents = await readFile(globalStylesheet, 'utf8');
     } catch (error) {
@@ -240,7 +239,15 @@ async function addComponents(args: string[]) {
         throw error;
       }
     }
-    if (!contents.includes(themeImport)) {
+    if (contents === undefined) {
+      const templateDirectory = await findTemplateDirectory('');
+      await copyFile(
+        join(templateDirectory, 'global.css'),
+        globalStylesheet,
+        constants.COPYFILE_EXCL,
+      );
+      console.log(`Added ${join('src', 'global.css')}`);
+    } else if (!contents.includes(themeImport)) {
       const separator = contents && !contents.endsWith('\n') ? '\n' : '';
       await appendFile(globalStylesheet, `${separator}${themeImport}\n`);
       console.log(`Added ${join('src', 'global.css')} theme import`);
