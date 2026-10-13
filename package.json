@@ -16,7 +16,8 @@
     "build": "tsup main.ts --format esm --clean --minify"
   },
   "keywords": [],
-  "author": "",
+  "author": "Vladislav Sivolobov",
+  "repository"
   "license": "ISC",
   "type": "module",
   "devDependencies": {
