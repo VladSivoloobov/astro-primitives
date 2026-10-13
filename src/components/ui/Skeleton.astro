@@ -1,0 +1,27 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import tv, { type VariantProps } from '../../utils/tv';
+
+const skeleton = tv({
+  base: 'animate-pulse bg-secondary',
+  variants: {
+    shape: {
+      rectangle: 'rounded-md',
+      circle: 'rounded-full',
+    },
+  },
+  defaultVariants: {
+    shape: 'rectangle',
+  },
+});
+
+type Props = HTMLAttributes<'div'> & VariantProps<typeof skeleton>;
+
+const { shape, class: className, ...attributes }: Props = Astro.props;
+---
+
+<div
+  aria-hidden="true"
+  class={skeleton({ shape, class: className })}
+  {...attributes}
+/>

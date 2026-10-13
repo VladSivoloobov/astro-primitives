@@ -1,0 +1,36 @@
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.208 0.042 265.755);
+  --primary: oklch(0.208 0.042 265.755);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.968 0.007 247.896);
+  --secondary-foreground: oklch(0.208 0.042 265.755);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.869 0.022 252.894);
+  --ring: oklch(0.554 0.046 257.417);
+  --container-max-width: 72rem;
+  --container-padding: 1rem;
+  --container-padding-sm: 1.5rem;
+  --container-padding-lg: 2rem;
+  --section-padding-none: 0rem;
+  --section-padding-sm: 2rem;
+  --section-padding-sm-md: 2.5rem;
+  --section-padding-default: 3rem;
+  --section-padding-default-md: 4rem;
+  --section-padding-lg: 4rem;
+  --section-padding-lg-md: 6rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+}

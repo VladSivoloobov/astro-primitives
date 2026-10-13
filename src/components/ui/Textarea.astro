@@ -1,0 +1,37 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import tv, { type VariantProps } from '../../utils/tv';
+
+const textarea = tv({
+  base: 'min-h-24 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-foreground/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
+  variants: {
+    invalid: {
+      true: 'border-destructive focus-visible:ring-destructive',
+    },
+    resize: {
+      none: 'resize-none',
+      vertical: 'resize-y',
+      both: 'resize',
+    },
+  },
+  defaultVariants: {
+    invalid: false,
+    resize: 'vertical',
+  },
+});
+
+type Props = HTMLAttributes<'textarea'> & VariantProps<typeof textarea>;
+
+const {
+  invalid,
+  resize,
+  class: className,
+  ...attributes
+}: Props = Astro.props;
+---
+
+<textarea
+  class={textarea({ invalid, resize, class: className })}
+  aria-invalid={invalid || undefined}
+  {...attributes}
+></textarea>

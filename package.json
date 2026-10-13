@@ -1,0 +1,38 @@
+{
+  "name": "astro-primitives",
+  "version": "1.0.0",
+  "description": "Composable Astro UI primitives you can add and customize in your project",
+  "files": [
+    "dist/main.js",
+    "src/components/ui",
+    "src/theme.css",
+    "src/utils",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "npm run build && node --test test/cli.test.mjs",
+    "dev": "tsx main.ts",
+    "build": "tsup main.ts --format esm --clean --minify"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "astro": "^7.3.8",
+    "tsup": "^8.5.1",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  },
+  "bin": {
+    "astro-primitives": "./dist/main.js"
+  },
+  "allowScripts": {
+    "esbuild@0.27.7": true,
+    "esbuild@0.28.2": true
+  },
+  "dependencies": {
+    "tailwind-variants": "^3.3.1"
+  }
+}

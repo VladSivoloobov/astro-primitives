@@ -1,0 +1,26 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'a'> {
+  href?: string;
+  label?: string;
+}
+
+const {
+  href = '/',
+  label = 'Brand',
+  class: className,
+  ...attributes
+}: Props = Astro.props;
+---
+
+<a
+  href={href}
+  class:list={[
+    'inline-flex items-center font-semibold text-foreground',
+    className,
+  ]}
+  {...attributes}
+>
+  <slot>{label}</slot>
+</a>

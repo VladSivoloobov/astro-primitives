@@ -1,0 +1,36 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import tv, { type VariantProps } from '../../utils/tv';
+
+const section = tv({
+  base: 'w-full',
+  variants: {
+    spacing: {
+      none: 'py-[var(--section-padding-none)]',
+      sm: 'py-[var(--section-padding-sm)] md:py-[var(--section-padding-sm-md)]',
+      default:
+        'py-[var(--section-padding-default)] md:py-[var(--section-padding-default-md)]',
+      lg: 'py-[var(--section-padding-lg)] md:py-[var(--section-padding-lg-md)]',
+    },
+  },
+  defaultVariants: {
+    spacing: 'default',
+  },
+});
+
+type Props = HTMLAttributes<'section'> & VariantProps<typeof section>;
+
+const {
+  spacing,
+  class: className,
+  ...attributes
+}: Props = Astro.props;
+
+---
+
+<section
+  class={section({ spacing, class: className })}
+  {...attributes}
+>
+  <slot />
+</section>

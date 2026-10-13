@@ -1,0 +1,52 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import tv, { type VariantProps } from '../../utils/tv';
+
+const stack = tv({
+  base: 'flex',
+  variants: {
+    orientation: {
+      vertical: 'flex-col',
+      horizontal: 'flex-row',
+    },
+    gap: {
+      none: 'gap-0',
+      sm: 'gap-2',
+      default: 'gap-4',
+      lg: 'gap-8',
+    },
+    align: {
+      start: 'items-start',
+      center: 'items-center',
+      end: 'items-end',
+      stretch: 'items-stretch',
+    },
+  },
+  defaultVariants: {
+    orientation: 'vertical',
+    gap: 'default',
+    align: 'stretch',
+  },
+});
+
+type Props = HTMLAttributes<'div'> &
+  VariantProps<typeof stack> & {
+    as?: 'div' | 'ul' | 'ol';
+  };
+
+const {
+  as: Element = 'div',
+  orientation,
+  gap,
+  align,
+  class: className,
+  ...attributes
+}: Props = Astro.props;
+---
+
+<Element
+  class={stack({ orientation, gap, align, class: className })}
+  {...attributes}
+>
+  <slot />
+</Element>

@@ -1,0 +1,22 @@
+@import 'tailwindcss';
+@import './theme.css';
+
+@theme {
+  --breakpoint-*: initial;
+}
+
+@custom-variant xl (@media (max-width: 1440px));
+@custom-variant lg (@media (max-width: 1225px));
+@custom-variant md (@media (max-width: 992px));
+@custom-variant sm (@media (max-width: 768px));
+@custom-variant xs (@media (max-width: 480px));
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
+  :is(h1, h2, h3) * {
+    @apply font-[inherit];
+  }
+}

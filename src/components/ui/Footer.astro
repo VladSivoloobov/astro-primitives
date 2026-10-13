@@ -1,0 +1,11 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+type Props = HTMLAttributes<'footer'>;
+
+const { class: className, ...attributes }: Props = Astro.props;
+---
+
+<footer class:list={['w-full', className]} {...attributes}>
+  <slot />
+</footer>

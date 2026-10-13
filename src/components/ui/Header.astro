@@ -1,0 +1,24 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import tv, { type VariantProps } from '../../utils/tv';
+
+const header = tv({
+  base: 'w-full',
+  variants: {
+    sticky: {
+      true: 'sticky top-0 z-50',
+    },
+  },
+});
+
+type Props = HTMLAttributes<'header'> & VariantProps<typeof header>;
+
+const { sticky = false, class: className, ...attributes }: Props = Astro.props;
+---
+
+<header
+  class={header({ sticky, class: className })}
+  {...attributes}
+>
+  <slot />
+</header>
