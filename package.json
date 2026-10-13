@@ -1,6 +1,6 @@
 {
   "name": "@vladsivolobov/astro-primitives",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Composable Astro UI primitives you can add and customize in your project",
   "files": [
     "dist/main.js",
